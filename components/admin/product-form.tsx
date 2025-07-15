@@ -70,6 +70,8 @@ export function ProductForm({ product, onClose, onSave }: ProductFormProps) {
       const url = product ? `/api/products/${product.id}` : "/api/products"
       const method = product ? "PUT" : "POST"
 
+      console.log("🚀 [ProductForm] Enviando petición:", { url, method, formData })
+
       const response = await fetch(url, {
         method,
         headers: {
@@ -78,7 +80,16 @@ export function ProductForm({ product, onClose, onSave }: ProductFormProps) {
         body: JSON.stringify(formData),
       })
 
-      if (!response.ok) throw new Error("Failed to save product")
+      console.log("📡 [ProductForm] Respuesta recibida:", { status: response.status, ok: response.ok })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        console.error("❌ [ProductForm] Error en respuesta:", errorData)
+        throw new Error(errorData.details || errorData.error || `HTTP ${response.status}: ${response.statusText}`)
+      }
+
+      const result = await response.json()
+      console.log("✅ [ProductForm] Respuesta exitosa:", result)
 
       toast({
         title: product ? "Producto actualizado" : "Producto creado",
@@ -88,9 +99,10 @@ export function ProductForm({ product, onClose, onSave }: ProductFormProps) {
       onSave()
       onClose()
     } catch (error) {
+      console.error("❌ [ProductForm] Error completo:", error)
       toast({
         title: "Error",
-        description: "No se pudo guardar el producto. Intenta nuevamente.",
+        description: error instanceof Error ? error.message : "No se pudo guardar el producto. Intenta nuevamente.",
         variant: "destructive",
       })
     } finally {

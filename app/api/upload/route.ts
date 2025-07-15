@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { supabase } from "@/lib/supabase"
+import { supabase, supabaseAdmin } from "@/lib/supabase"
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,8 +15,8 @@ export async function POST(request: NextRequest) {
     const fileExt = file.name.split(".").pop()
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
 
-    // Upload to Supabase Storage
-    const { data, error } = await supabase.storage.from(bucket).upload(fileName, file, {
+    // Upload to Supabase Storage using admin client
+    const { data, error } = await supabaseAdmin.storage.from(bucket).upload(fileName, file, {
       cacheControl: "3600",
       upsert: false,
     })
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     // Get public URL
     const {
       data: { publicUrl },
-    } = supabase.storage.from(bucket).getPublicUrl(fileName)
+    } = supabaseAdmin.storage.from(bucket).getPublicUrl(fileName)
 
     return NextResponse.json({ url: publicUrl })
   } catch (error) {
