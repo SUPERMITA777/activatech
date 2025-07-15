@@ -1,12 +1,6 @@
 {
   "version": 2,
   "name": "activatech-landing",
-  "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "@NEXT_PUBLIC_SUPABASE_URL",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@NEXT_PUBLIC_SUPABASE_ANON_KEY",
-    "INSTAGRAM_ACCESS_TOKEN": "@INSTAGRAM_ACCESS_TOKEN",
-    "CURRENCY_API_KEY": "@CURRENCY_API_KEY"
-  },
   "functions": {
     "app/api/**/*.ts": {
       "maxDuration": 30
